@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Opet Map Ecosystem</title>
+<link rel="icon" href="favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.6.0/dist/maplibre-gl.css">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="map"></div>
+
+<!-- HUD overlays -->
+<div class="fx tint"></div>
+<div class="fx grid"></div>
+<div class="sweep"></div>
+<div class="fx vig"></div>
+<div class="fx scan"></div>
+<div class="frame"><i></i><i></i><i></i><i></i></div>
+
+<div class="top">
+  <a class="brand" href="./"><img class="mark" src="logo-opet.png" alt="">OPET <span>/</span> MAPS</a>
+  <nav class="crumbs mono" id="crumbs"></nav>
+  <div class="sys mono"><span class="on">SYSTEM <b>ONLINE</b></span><span id="clock"></span></div>
+</div>
+
+<aside class="panel" id="panel"></aside>
+
+<div class="dock">
+  <span class="cap mono">Select region</span>
+  <div class="tabs" id="tabs"></div>
+</div>
+<div class="readout mono" id="readout"></div>
+
+<div class="viewer" id="viewer">
+  <div class="bar">
+    <span class="label mono" id="viewerTitle"></span>
+    <span>
+      <a class="btn ghost" id="viewerNew" target="_blank" rel="noopener">New tab ↗</a>
+      <button class="btn" id="viewerClose">Close ✕</button>
+    </span>
+  </div>
+  <iframe id="frame" allow="fullscreen; geolocation" title="Map"></iframe>
+</div>
+
+<script src="https://unpkg.com/maplibre-gl@5.6.0/dist/maplibre-gl.js"></script>
+<script src="data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
