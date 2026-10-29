@@ -48,8 +48,38 @@
       ? `${tag}<div class="badge ${kind}"><img class="logo" src="${logo}" alt="" onload="if(this.naturalWidth/this.naturalHeight>2)this.parentNode.classList.add('wide')"></div><div class="stem"></div><div class="tip"></div>`
       : `${tag}<div class="dot"></div>`;
     el.addEventListener('click', onClick);
+    const img = el.querySelector('img');
+    if (img) img.addEventListener('load', declutter);
     markers.push(new maplibregl.Marker({ element: el, anchor: 'bottom' }).setLngLat(coords).addTo(map));
+    declutter();
   }
+
+  // pins close together on screen (e.g. New Cairo / Giza at country zoom) would cover each other:
+  // keep the lowest pin as is and lengthen the stems of the others until their badges clear it
+  const STEM = 18, FOOT = 22; // default stem height; stem + tip height below the badge
+  let declutterQueued = false;
+  function declutter() {
+    if (declutterQueued) return;
+    declutterQueued = true;
+    requestAnimationFrame(() => {
+      declutterQueued = false;
+      const placed = [];
+      markers
+        .map((m) => ({ el: m.getElement(), p: map.project(m.getLngLat()) }))
+        .sort((a, b) => b.p.y - a.p.y)
+        .forEach(({ el, p }) => {
+          const stem = el.querySelector('.stem');
+          const w = el.offsetWidth, h = el.offsetHeight - (stem ? stem.offsetHeight - STEM : 0);
+          const box = (lift) => ({ l: p.x - w / 2, r: p.x + w / 2, t: p.y - h - lift, b: p.y - FOOT - lift });
+          const hits = (a) => placed.some((o) => a.l < o.r && a.r > o.l && a.t < o.b && a.b > o.t);
+          let lift = 0;
+          if (stem) while (lift < 400 && hits(box(lift))) lift += 4;
+          if (stem) stem.style.height = STEM + lift + 'px';
+          placed.push(box(lift));
+        });
+    });
+  }
+  map.on('move', declutter);
 
   const mapCount = (c) => c.cities.reduce((n, x) => n + x.maps.length, 0);
 

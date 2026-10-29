@@ -6,8 +6,8 @@ window.HUB_DATA = [
     id: 'egypt',
     name: 'Egypt',
     flag: 'flags/eg.svg',
-    coords: [30.8, 27.0],
-    zoom: 5.2,
+    coords: [30.8, 27.8], // a bit north of centre: leaves room above Cairo for the stacked pins
+    zoom: 5.0,
     cities: [
       {
         id: 'new-cairo',
