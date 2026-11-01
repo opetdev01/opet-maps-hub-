@@ -29,6 +29,7 @@
     }
   });
   map.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'bottom-right');
+  window.startStars(map);
 
   // state: { country, city } ids or null
   let state = { country: null, city: null };
