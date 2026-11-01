@@ -34,8 +34,7 @@ window.HUB_DATA = [
             id: 'west-gate',
             name: 'West Gate',
             url: 'https://west-gate-map.vercel.app',
-            logo: 'logo-westgate.png',
-            embed: false, // site sends CSP frame-ancestors 'self' -> opens in a new tab
+            logo: 'logo-westgate.png', // site's frame-ancestors allows the hub's two addresses (West_Gate_Map vercel.json)
             desc: 'Interactive master plan for West Gate, Giza.'
           }
         ]
