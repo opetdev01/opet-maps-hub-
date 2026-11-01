@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Area Drawing Tool</title>
+<link rel="icon" href="favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.6.0/dist/maplibre-gl.css">
+<link rel="stylesheet" href="style.css">
+<style>
+  [hidden] { display: none !important; }
+  .edit .maplibregl-canvas-container.maplibregl-interactive { cursor: crosshair; }
+  .tools { padding: 18px 24px; display: grid; gap: 14px; }
+  .tools .row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .tools .btn { justify-content: center; margin: 0; padding: 12px 10px; }
+  .tools .btn[disabled] { opacity: .35; cursor: not-allowed; filter: none; }
+  .tools .wide { width: 100%; }
+  .status { color: var(--fg); font-size: 14px; line-height: 1.5; padding: 10px 12px; border-left: 2px solid var(--accent); background: rgba(0,243,255,.07); }
+  .tools label { display: grid; grid-template-columns: 1fr auto; gap: 6px 10px; color: var(--muted); }
+  .tools label b { color: var(--accent); font-weight: 400; }
+  .tools input[type=range] { grid-column: 1 / -1; width: 100%; accent-color: var(--accent); }
+  .tools textarea { width: 100%; height: 76px; resize: none; padding: 8px; background: rgba(0,0,0,.45); border: 1px solid var(--line); color: var(--muted); font: 10px/1.5 'JetBrains Mono', monospace; }
+  .tools .help { color: var(--muted); font-size: 13px; line-height: 1.55; }
+  .tools .help b { color: #fff; font-weight: 400; }
+  .tab .tick { color: var(--accent); }
+  .vtx { width: 14px; height: 14px; background: #000; border: 2px solid var(--accent); box-shadow: 0 0 10px var(--accent); cursor: move; }
+  .vtx.first { background: var(--accent); cursor: pointer; }
+  .mid { width: 9px; height: 9px; background: rgba(0,243,255,.45); transform-origin: center; cursor: copy; }
+  .mid::after { content: ''; position: absolute; inset: -6px; }
+  .sim .dock { display: none; }
+  .pin.call .badge { animation: call 1.4s ease-out infinite; }
+  @keyframes call { 0% { box-shadow: 0 0 0 0 rgba(0,243,255,.8), var(--glow); } 100% { box-shadow: 0 0 0 22px rgba(0,243,255,0), var(--glow); } }
+</style>
+</head>
+<body class="edit">
+<div id="map"></div>
+
+<div class="fx tint"></div>
+<div class="fx grid"></div>
+<div class="fx vig"></div>
+<div class="fx scan"></div>
+<div class="frame"><i></i><i></i><i></i><i></i></div>
+
+<div class="top">
+  <span class="brand"><img class="mark" src="logo-opet.png" alt="">OPET <span>/</span> DRAW</span>
+  <div class="sys mono"><span class="on">AREA <b>DRAWING TOOL</b></span></div>
+</div>
+
+<aside class="panel">
+  <header>
+    <span class="label mono" id="city"></span>
+    <h1 id="title"></h1>
+  </header>
+  <div class="list">
+    <div class="tools" id="editTools">
+      <div class="status" id="editStatus"></div>
+      <div class="row">
+        <button class="btn ghost" id="undo" disabled>Undo</button>
+        <button class="btn ghost" id="clear" disabled>Clear</button>
+      </div>
+      <button class="btn wide" id="play" disabled>Play simulation ▶</button>
+      <label class="mono">Camera fly<b id="flyVal"></b><input type="range" id="fly" min="1" max="7" step="0.5"></label>
+      <label class="mono">Line draw<b id="lineVal"></b><input type="range" id="line" min="1" max="10" step="0.5"></label>
+      <button class="btn ghost wide" id="copy" disabled>Copy coordinates</button>
+      <textarea id="out" readonly aria-label="Coordinates"></textarea>
+      <p class="help"><b>Drag a square</b> to move it. <b>Drag a small dot</b> to add a point. <b>Double-click a square</b> to delete it. The line draws from the filled square, in the order you clicked.</p>
+    </div>
+    <div class="tools" id="simTools" hidden>
+      <div class="status" id="simStatus"></div>
+      <button class="btn wide" id="replay">Replay ↺</button>
+      <button class="btn ghost wide" id="back">Back to drawing</button>
+    </div>
+  </div>
+</aside>
+
+<div class="dock">
+  <span class="cap mono">Select project</span>
+  <div class="tabs" id="tabs"></div>
+</div>
+<div class="readout mono" id="readout"></div>
+
+<script src="https://unpkg.com/maplibre-gl@5.6.0/dist/maplibre-gl.js"></script>
+<script src="data.js"></script>
+<script src="boundary.js"></script>
+<script src="draw.js"></script>
+</body>
+</html>
