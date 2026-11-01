@@ -17,7 +17,7 @@ window.HUB_DATA = [
         maps: [
           {
             id: 'zomra',
-            name: 'Zomra Map',
+            name: 'Zomra',
             url: 'https://zomra.opetstudios.com',
             logo: 'logo-zomra.png', // pin icon; omit to use the default square pin
             desc: 'Interactive master plan for Zomra, New Cairo.'
@@ -32,7 +32,7 @@ window.HUB_DATA = [
         maps: [
           {
             id: 'west-gate',
-            name: 'West Gate Map',
+            name: 'West Gate',
             url: 'https://west-gate-map.vercel.app',
             logo: 'logo-westgate.png',
             embed: false, // site sends CSP frame-ancestors 'self' -> opens in a new tab
@@ -57,7 +57,7 @@ window.HUB_DATA = [
         maps: [
           {
             id: 'hay-wafa',
-            name: 'Hay Al Wafa Map',
+            name: 'Hay Al Wafa',
             url: 'https://hay.wafa.opetstudios.com',
             logo: 'logo-hay-wafa.png',
             desc: 'Interactive map for Hay Al Wafa, Oman.'
@@ -81,7 +81,7 @@ window.HUB_DATA = [
         maps: [
           {
             id: 'factories',
-            name: 'Factories Map',
+            name: 'SIIVC',
             url: 'https://factoriesmap.opetstudios.com',
             logo: 'logo-siiv.png',
             desc: 'Interactive factories map for Jazan, Saudi Arabia.'

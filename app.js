@@ -134,8 +134,10 @@
       panel.innerHTML = `<header><span class="label mono">Country</span><h1>${c.name}</h1>
         <p class="sub">Choose a location to see its maps.</p></header><div class="list" id="list"></div>`;
       c.cities.forEach((ct) => {
-        addPin(ct.coords, ct.name, ct.maps.length, () => go({ country: c.id, city: ct.id }), ct.maps.length === 1 ? ct.maps[0].logo : null);
-        listItem(ct.name, `${ct.maps.length} ${ct.maps.length > 1 ? 'maps' : 'map'}${ct.approx ? ' · <span class="approx">approx. position</span>' : ''}`, () => go({ country: c.id, city: ct.id }));
+        // lead with the project name(s); the city is the small location line
+        const projects = ct.maps.map((m) => m.name).join(' / ');
+        addPin(ct.coords, projects, null, () => go({ country: c.id, city: ct.id }), ct.maps.length === 1 ? ct.maps[0].logo : null);
+        listItem(projects, `${ct.name}${ct.approx ? ' · <span class="approx">approx. position</span>' : ''}`, () => go({ country: c.id, city: ct.id }));
       });
     } else {
       const ct = city();
