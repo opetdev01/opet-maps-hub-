@@ -8,7 +8,11 @@
   const load = (k, d) => { try { return JSON.parse(localStorage.getItem(k)) || d; } catch (e) { return d; } };
 
   // every project, with the city it sits in
-  const PROJECTS = window.HUB_DATA.flatMap((c) => c.cities.flatMap((ct) => ct.maps.map((m) => ({ ...m, city: ct, country: c }))));
+  const ALL = window.HUB_DATA.flatMap((c) => c.cities.flatMap((ct) => ct.maps.map((m) => ({ ...m, city: ct, country: c }))));
+  // draw.html?only=zomra works on that one project
+  const only = ALL.filter((p) => p.id === new URLSearchParams(location.search).get('only'));
+  const PROJECTS = only.length ? only : ALL;
+  if (only.length) document.querySelector('.dock').hidden = true;
   const drawings = load(KEY, {});
   const timing = load(TIMING, { fly: 3, line: 4 });
   PROJECTS.forEach((p) => { if (!drawings[p.id] && p.boundary) drawings[p.id] = { points: p.boundary, closed: true }; });
