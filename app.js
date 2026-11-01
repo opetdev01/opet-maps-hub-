@@ -84,13 +84,38 @@
 
   const mapCount = (c) => c.cities.reduce((n, x) => n + x.maps.length, 0);
 
+  // project outline: the camera flies to fit it and the line traces around it
+  const ANIM = window.HUB_ANIMATION;
+  const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const areaOf = (ct) => { const m = ct.maps.find((x) => x.boundary); return m && m.boundary; };
+  let boundary = null, traceTimer = 0;
+
+  function trace(area) {
+    if (still) boundary.show(area); else boundary.draw(area, ANIM.lineSeconds * 1000);
+  }
+
+  map.once('style.load', () => {
+    boundary = window.HubBoundary(map);
+    const area = city() && areaOf(city()); // opened from a shared link
+    if (area) { map.jumpTo(boundary.camera(area)); trace(area); }
+  });
+
   function go(next, fly = true) {
     state = next;
+    clearTimeout(traceTimer);
+    if (boundary) boundary.clear();
     render();
     if (!fly) return;
     if (!state.country) map.flyTo({ ...WORLD, duration: 2500, padding: pad(), essential: true });
     else if (!state.city) map.flyTo({ center: country().coords, zoom: country().zoom, duration: 2500, padding: pad(), essential: true });
-    else map.flyTo({ center: city().coords, zoom: city().zoom, duration: 2800, padding: pad(), essential: true });
+    else {
+      const area = areaOf(city());
+      const flyMs = ANIM.flySeconds * 1000;
+      map.setPadding(pad()); // the camera fit below must use the same padding
+      const cam = area && boundary && boundary.camera(area);
+      map.flyTo({ ...(cam || { center: city().coords, zoom: city().zoom }), duration: flyMs, essential: true });
+      if (cam) traceTimer = setTimeout(() => trace(area), flyMs * 0.6); // the line starts just before the camera lands
+    }
     history.replaceState(null, '', '#' + [state.country, state.city].filter(Boolean).join('/'));
   }
 

@@ -57,7 +57,8 @@ window.HubBoundary = function (map) {
   function camera(points) {
     const b = new maplibregl.LngLatBounds(points[0], points[0]);
     points.forEach((p) => b.extend(p));
-    return map.cameraForBounds(b, { padding: { top: 110, bottom: 130, left: 60, right: 90 } });
+    const padding = innerWidth > 760 ? { top: 110, bottom: 130, left: 60, right: 90 } : { top: 90, bottom: 20, left: 30, right: 30 };
+    return map.cameraForBounds(b, { padding });
   }
 
   return { clear, show, draw, camera };
