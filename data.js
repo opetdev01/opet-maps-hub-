@@ -95,5 +95,30 @@ window.HUB_DATA = [
         ]
       }
     ]
+  },
+  {
+    id: 'uae',
+    name: 'United Arab Emirates',
+    flag: 'flags/ae.svg',
+    coords: [54.3, 24.2],
+    zoom: 6.4,
+    cities: [
+      {
+        id: 'abu-dhabi',
+        name: 'Abu Dhabi',
+        coords: [54.3774, 24.4538],
+        zoom: 9.5,
+        approx: true,
+        maps: [
+          {
+            id: 'majarra',
+            name: 'Majarra',
+            url: 'https://majarra.voom.cc',
+            logo: 'logo-majarra.png',
+            desc: 'Interactive map for Majarra Islands, Abu Dhabi.'
+          }
+        ]
+      }
+    ]
   }
 ];

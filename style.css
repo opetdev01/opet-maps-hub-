@@ -170,6 +170,9 @@ body { font-family: 'Jost', futura, sans-serif; -webkit-font-smoothing: antialia
 .viewer.open::after { content: "LOADING MAP…"; position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%); color: var(--accent);
   font: 12px "JetBrains Mono", monospace; letter-spacing: .3em; animation: blink 1.2s infinite; }
 
+/* the region dock needs the bottom edge once it holds five tabs */
+@media (max-width: 1200px) { .readout { display: none; } }
+
 @media (max-width: 760px) {
   .top { padding: 24px 28px 0; }
   .crumbs, .sys { display: none; }
