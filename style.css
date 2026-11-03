@@ -159,6 +159,15 @@ body { font-family: 'Jost', futura, sans-serif; -webkit-font-smoothing: antialia
 .pin:hover .tag { color: #000; background: var(--accent); }
 .pin .tag em { font-style: normal; color: var(--accent); margin-left: 8px; }
 .pin:hover .tag em { color: #000; }
+.pin .head { display: flex; flex-direction: column; align-items: center; }
+/* pins too close to stand upright: the logo sits beside its pin, joined by a level line */
+.pin.side-left .head, .pin.side-right .head { position: absolute; top: 4px; transform: translateY(-50%); }
+.pin.side-right .head { left: 26px; }
+.pin.side-left .head { right: 26px; }
+.pin.side-left .tag, .pin.side-right .tag { position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%); }
+.pin.side-left .stem, .pin.side-right .stem { position: absolute; top: 3.5px; width: 18px; height: 1px; }
+.pin.side-right .stem { left: 8px; background: linear-gradient(to left, transparent, var(--accent)); }
+.pin.side-left .stem { right: 8px; background: linear-gradient(to right, transparent, var(--accent)); }
 
 /* ---------- embed viewer ---------- */
 .viewer { position: fixed; inset: 0; z-index: 20; background: #000; display: none; flex-direction: column; }
@@ -181,5 +190,6 @@ body { font-family: 'Jost', futura, sans-serif; -webkit-font-smoothing: antialia
   .dock { bottom: 20px; }
   .dock .cap { display: none; }
   .tab { padding: 11px 18px 11px 14px; }
+  .pin .badge.wide .logo { width: 130px; }
   .maplibregl-ctrl-bottom-right { bottom: 170px; right: 20px; }
 }

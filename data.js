@@ -9,8 +9,8 @@ window.HUB_DATA = [
     id: 'egypt',
     name: 'Egypt',
     flag: 'flags/eg.svg',
-    coords: [30.8, 28.8], // a bit north of centre: leaves room above Cairo for the stacked pins
-    phoneCoords: [30.8, 31.5], // phones have less map above the panel, so Cairo needs to sit lower
+    coords: [30.8, 27.0],
+    phoneCoords: [30.8, 29.5], // phones have less map above the panel, so Cairo needs to sit lower
     zoom: 5.0,
     cities: [
       {

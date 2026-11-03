@@ -47,7 +47,7 @@
     const tag = `<div class="tag">${label}${count != null ? `<em>${count}</em>` : ''}</div>`;
     // label on top, stem pointing down: the marker's bottom edge is the exact coordinate
     el.innerHTML = logo
-      ? `${tag}<div class="badge ${kind}"><img class="logo" src="${logo}" alt="" onload="if(this.naturalWidth/this.naturalHeight>2)this.parentNode.classList.add('wide')"></div><div class="stem"></div><div class="tip"></div>`
+      ? `<div class="head">${tag}<div class="badge ${kind}"><img class="logo" src="${logo}" alt="" onload="if(this.naturalWidth/this.naturalHeight>2)this.parentNode.classList.add('wide')"></div></div><div class="stem"></div><div class="tip"></div>`
       : `${tag}<div class="dot"></div>`;
     el.addEventListener('click', onClick);
     const img = el.querySelector('img');
@@ -57,28 +57,43 @@
   }
 
   // pins close together on screen (e.g. New Cairo / Giza at country zoom) would cover each other:
-  // keep the lowest pin as is and lengthen the stems of the others until their badges clear it
-  const STEM = 18, FOOT = 22, GAP = 34; // default stem height; stem + tip height below the badge; clear space between stacked pins
+  // logos swing out to the left and right of their pins; flags lengthen their stems until they clear
+  const STEM = 18, FOOT = 22, GAP = 34; // default stem height; stem + tip height below the badge; clear space between pins
+  const overlap = (a, b) => a.l < b.r && a.r > b.l && a.t < b.b + GAP && a.b + GAP > b.t;
   let declutterQueued = false;
   function declutter() {
     if (declutterQueued) return;
     declutterQueued = true;
     requestAnimationFrame(() => {
       declutterQueued = false;
-      const placed = [];
-      markers
+      const pins = markers
         .map((m) => ({ el: m.getElement(), p: map.project(m.getLngLat()) }))
-        .sort((a, b) => b.p.y - a.p.y)
-        .forEach(({ el, p }) => {
-          const stem = el.querySelector('.stem');
-          const w = el.offsetWidth, h = el.offsetHeight - (stem ? stem.offsetHeight - STEM : 0);
-          const box = (lift) => ({ l: p.x - w / 2, r: p.x + w / 2, t: p.y - h - lift, b: p.y - FOOT - lift });
-          const hits = (a) => placed.some((o) => a.l < o.r && a.r > o.l && a.t < o.b + GAP && a.b + GAP > o.t);
-          let lift = 0;
-          if (stem) while (lift < 400 && hits(box(lift))) lift += 4;
-          if (stem) stem.style.height = STEM + lift + 'px';
-          placed.push(box(lift));
+        .filter(({ el }) => el.querySelector('.stem'))
+        .map(({ el, p }) => {
+          const flag = el.classList.contains('compact');
+          const badge = el.querySelector('.badge'), tag = el.querySelector('.tag');
+          // the size standing upright, whichever way the pin is showing right now
+          const w = flag ? badge.offsetWidth : Math.max(badge.offsetWidth, tag.offsetWidth);
+          const h = FOOT + badge.offsetHeight + (flag ? 0 : tag.offsetHeight + 6);
+          return { el, p, flag, box: (lift) => ({ l: p.x - w / 2, r: p.x + w / 2, t: p.y - h - lift, b: p.y - FOOT - lift }) };
         });
+
+      const logos = pins.filter((a) => !a.flag);
+      logos.map((a) => {
+        const near = logos.filter((b) => b !== a && overlap(a.box(0), b.box(0)));
+        return { a, west: near.some((b) => b.p.x < a.p.x), east: near.some((b) => b.p.x > a.p.x) };
+      }).forEach(({ a, west, east }) => {
+        a.el.classList.toggle('side-right', west && !east);
+        a.el.classList.toggle('side-left', east && !west);
+      });
+
+      const placed = [];
+      pins.filter((a) => a.flag).sort((a, b) => b.p.y - a.p.y).forEach(({ el, box }) => {
+        let lift = 0;
+        while (lift < 400 && placed.some((o) => overlap(box(lift), o))) lift += 4;
+        el.querySelector('.stem').style.height = STEM + lift + 'px';
+        placed.push(box(lift));
+      });
     });
   }
   map.on('move', declutter);
