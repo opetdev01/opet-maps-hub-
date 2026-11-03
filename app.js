@@ -4,6 +4,7 @@
   const WORLD = { center: [43, 20], zoom: 2.4 };
   const pad = () => (innerWidth > 760 ? { left: 360, top: 0, right: 0, bottom: 0 } : { left: 0, top: 60, right: 0, bottom: Math.round(innerHeight * 0.46) + 70 });
   const two = (n) => String(n).padStart(2, '0');
+  const centerOf = (t) => (innerWidth <= 760 && t.phoneCoords) || t.coords;
 
   const map = new maplibregl.Map({
     container: 'map',
@@ -57,7 +58,7 @@
 
   // pins close together on screen (e.g. New Cairo / Giza at country zoom) would cover each other:
   // keep the lowest pin as is and lengthen the stems of the others until their badges clear it
-  const STEM = 18, FOOT = 22; // default stem height; stem + tip height below the badge
+  const STEM = 18, FOOT = 22, GAP = 34; // default stem height; stem + tip height below the badge; clear space between stacked pins
   let declutterQueued = false;
   function declutter() {
     if (declutterQueued) return;
@@ -72,7 +73,7 @@
           const stem = el.querySelector('.stem');
           const w = el.offsetWidth, h = el.offsetHeight - (stem ? stem.offsetHeight - STEM : 0);
           const box = (lift) => ({ l: p.x - w / 2, r: p.x + w / 2, t: p.y - h - lift, b: p.y - FOOT - lift });
-          const hits = (a) => placed.some((o) => a.l < o.r && a.r > o.l && a.t < o.b && a.b > o.t);
+          const hits = (a) => placed.some((o) => a.l < o.r && a.r > o.l && a.t < o.b + GAP && a.b + GAP > o.t);
           let lift = 0;
           if (stem) while (lift < 400 && hits(box(lift))) lift += 4;
           if (stem) stem.style.height = STEM + lift + 'px';
@@ -107,7 +108,7 @@
     render();
     if (!fly) return;
     if (!state.country) map.flyTo({ ...WORLD, duration: 2500, padding: pad(), essential: true });
-    else if (!state.city) map.flyTo({ center: country().coords, zoom: country().zoom, duration: 2500, padding: pad(), essential: true });
+    else if (!state.city) map.flyTo({ center: centerOf(country()), zoom: country().zoom, duration: 2500, padding: pad(), essential: true });
     else {
       const area = areaOf(city());
       const flyMs = ANIM.flySeconds * 1000;
@@ -205,7 +206,7 @@
     const ok = hf.cities.some((x) => x.id === hct);
     state = { country: hf.id, city: ok ? hct : null };
     const t = ok ? city() : hf;
-    map.jumpTo({ center: t.coords, zoom: t.zoom, padding: pad() });
+    map.jumpTo({ center: centerOf(t), zoom: t.zoom, padding: pad() });
   } else {
     map.jumpTo({ ...WORLD, padding: pad() }); // globe ignores constructor padding
   }
