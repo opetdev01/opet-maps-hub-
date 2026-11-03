@@ -66,13 +66,13 @@ window.startStars = function (map) {
       pts.forEach(({ x, y, a, s }) => {
         const col = s.cyan ? CYAN : '220, 240, 255';
         ctx.fillStyle = `rgba(${col}, ${a})`;
-        ctx.fillRect(x - s.r / 2, y - s.r / 2, s.r, s.r); // square stars, to match the HUD
+        ctx.beginPath(); ctx.arc(x, y, s.r / 2, 0, Math.PI * 2); ctx.fill();
         if (l.links) { // bright stars get a small cross glint
           ctx.fillStyle = `rgba(${col}, ${a * 0.5})`;
           ctx.fillRect(x - s.r * 3, y - 0.4, s.r * 6, 0.8);
           ctx.fillRect(x - 0.4, y - s.r * 3, 0.8, s.r * 6);
           ctx.fillStyle = `rgba(${col}, ${a * 0.12})`; // soft halo
-          ctx.fillRect(x - s.r * 1.6, y - s.r * 1.6, s.r * 3.2, s.r * 3.2);
+          ctx.beginPath(); ctx.arc(x, y, s.r * 1.6, 0, Math.PI * 2); ctx.fill();
         }
       });
     });
